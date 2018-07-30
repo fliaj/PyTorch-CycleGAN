@@ -5,7 +5,6 @@ import itertools
 
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
-from torch.autograd import Variable
 from PIL import Image
 import torch
 
@@ -34,6 +33,8 @@ print(opt)
 
 if torch.cuda.is_available() and not opt.cuda:
     print("WARNING: You have a CUDA device, so you should probably run with --cuda")
+
+device = torch.device("cuda:0" if opt.cuda else "cpu")
 
 ###### Definition of variables ######
 # Networks
@@ -69,11 +70,8 @@ lr_scheduler_D_A = torch.optim.lr_scheduler.LambdaLR(optimizer_D_A, lr_lambda=La
 lr_scheduler_D_B = torch.optim.lr_scheduler.LambdaLR(optimizer_D_B, lr_lambda=LambdaLR(opt.n_epochs, opt.epoch, opt.decay_epoch).step)
 
 # Inputs & targets memory allocation
-Tensor = torch.cuda.FloatTensor if opt.cuda else torch.Tensor
-input_A = Tensor(opt.batchSize, opt.input_nc, opt.size, opt.size)
-input_B = Tensor(opt.batchSize, opt.output_nc, opt.size, opt.size)
-target_real = Variable(Tensor(opt.batchSize).fill_(1.0), requires_grad=False)
-target_fake = Variable(Tensor(opt.batchSize).fill_(0.0), requires_grad=False)
+target_real = torch.ones(opt.batchSize, 1).to(device)
+target_fake = torch.zeros(opt.batchSize, 1).to(device)
 
 fake_A_buffer = ReplayBuffer()
 fake_B_buffer = ReplayBuffer()
@@ -95,8 +93,8 @@ logger = Logger(opt.n_epochs, len(dataloader))
 for epoch in range(opt.epoch, opt.n_epochs):
     for i, batch in enumerate(dataloader):
         # Set model input
-        real_A = Variable(input_A.copy_(batch['A']))
-        real_B = Variable(input_B.copy_(batch['B']))
+        real_A = batch['A'].to(device)
+        real_B = batch['B'].to(device)
 
         ###### Generators A2B and B2A ######
         optimizer_G.zero_grad()
