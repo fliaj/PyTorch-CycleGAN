@@ -95,7 +95,8 @@ for epoch in range(opt.epoch, opt.n_epochs):
         # Set model input
         real_A = batch['A'].to(device)
         real_B = batch['B'].to(device)
-
+        print(real_A.shape)
+        print(real_B.shape)
         ###### Generators A2B and B2A ######
         optimizer_G.zero_grad()
 
