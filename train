@@ -19,7 +19,7 @@ from datasets import ImageDataset
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--epoch', type=int, default=0, help='starting epoch')
-parser.add_argument('--n_epochs', type=int, default=200, help='number of epochs of training')
+parser.add_argument('--n_epochs', type=int, default=64, help='number of epochs of training')
 parser.add_argument('--batchSize', type=int, default=1, help='size of the batches')
 parser.add_argument('--dataroot', type=str, default='datasets/horse2zebra/', help='root directory of the dataset')
 parser.add_argument('--lr', type=float, default=0.0002, help='initial learning rate')
